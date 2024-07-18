@@ -185,10 +185,10 @@
           let iq = calculateIQ();
           let str = "<p>Your test score is: "+calculateIQ()+"/200 "
 
-          if (iq >= 150) {
-            str += "Your score code is: CC-"+iq
+          if (iq >= 110) {
+            str += "Your score code is: CC-"+iq/5
           } else {
-            str += "Your score code is: FF-"+iq
+            str += "Your score code is: FF-"+iq/5
           }
 
           str = str+"</p>"
