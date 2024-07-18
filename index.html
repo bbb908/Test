@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello, World!</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .QuestionBox {
+        width: 20px;
+        height: 20px;
+      }
+    </style>
+  </head>
+  
+  <body>
+    <script>
+      var answers = []
+      
+      answers[0] = 2
+      answers[1] = 3
+      answers[2] = 1
+      
+      var questionNum = 0
+      var correct = 0
+      var totalQuestions = 3 //Not including new function questions
+      var selected_current = -1
+      var iqDeductions = 0
+      var doDeductSub = false
+      var testTime = 0
+      
+      questionMeta = {};
+      
+      //Question
+      questionMeta[0] = "What logically comes next? 5 7 9"
+      
+      function max(o1,o2) {
+        if (o1 < o2) return o2
+        
+        return o1
+      }
+      
+      function externalLenFetch(arr) {
+        let len = 0
+        
+        for (i in arr) {
+          len++
+        }
+        
+        return len
+      }
+      
+      function createQuestionFunc(Question,ans1,ans2,ans3,ans4,rightans) {
+        questionMeta[externalLenFetch(questionMeta)] = Question
+        questionMeta[externalLenFetch(questionMeta)] = ans1
+        questionMeta[externalLenFetch(questionMeta)] = ans2
+        questionMeta[externalLenFetch(questionMeta)] = ans3
+        questionMeta[externalLenFetch(questionMeta)] = ans4
+        answers[externalLenFetch(answers)] = rightans
+        totalQuestions += 1
+      }
+      
+      setInterval(function() {
+        testTime+=1
+      },1000)
+      
+      //Answers
+      questionMeta[1] = "12"
+      questionMeta[2] = "11"
+      questionMeta[3] = "5"
+      questionMeta[4] =  "9"
+      //Every 5 outputs creates a new question
+      
+      //Question2
+      questionMeta[5] = "How many faces does a 3D triangle have?"
+      questionMeta[6] = "12"
+      questionMeta[7] = "11"
+      questionMeta[8] = "5"
+      questionMeta[9] =  "9"
+      //Every 5 outputs creates a new question
+      
+      //Question3
+      questionMeta[10] = "How would you get the volume of a 4D object following the pattern of how you get the volume of 3D objects?"
+      questionMeta[11] = "Height X Length X Depth X 4th Dimension"
+      questionMeta[12] = "You can't"
+      questionMeta[13] = "(Height X Length X Depth X 4th Dimension) x2"
+      questionMeta[14] =  "(Height X Length X Depth X 4th Dimension) /2"
+      //Every 5 outputs creates a new question
+      //Question4
+      createQuestionFunc(
+        "When a speed-distance time graph shows a straight line what does that show?",
+        "the object is speeding up",
+        "the object is Slowing down",
+        "the object has stopped",
+        "there was a mistake in the results so they cut it out",
+        3
+      )
+      //Q5
+      createQuestionFunc(
+        "[Logical foreign understanding] what does anglais mean?",
+        "Angle",
+        "Angel",
+        "Angles",
+        "England",
+        4
+      )
+
+      createQuestionFunc(
+        "How many faces would a 3D octagon have?",
+        "8",
+        "10",
+        "2",
+        "5",
+        1
+      )
+
+      createQuestionFunc(
+        "Why does the quadratic formula have to give 2 answers?",
+        "Due to uncertainties it gives a range of the answer.",
+        "So it can be plotted on a graph",
+        "To get 2 possible outcomes",
+        "To get a wanted range of numbers",
+        2
+      )
+      
+      function getMetaForQuestion() {
+        meta = {};
+        let beginMark = questionNum *5
+        let endMark = ((questionNum +1) *5)
+        
+        let loops = 0
+        let successful = 0
+        for (v in questionMeta) {
+          if (loops >= beginMark && loops < endMark) {
+            meta[successful] = questionMeta[v]
+            successful += 1
+          }
+          loops += 1
+        }
+        
+        return meta
+      }
+      
+      function loadQuestion() {
+        document.getElementById("Question").innerText = getMetaForQuestion()[0]
+        document.getElementById("Answer1").innerText = getMetaForQuestion()[1]
+        document.getElementById("Answer2").innerText = getMetaForQuestion()[2]
+        document.getElementById("Answer3").innerText = getMetaForQuestion()[3]
+        document.getElementById("Answer4").innerText = getMetaForQuestion()[4]
+        selected_current = -1
+        for (let i = 1; i < 5; i++) {
+          document.getElementById("Button"+i).innerText = ""
+        }
+      }
+      
+      function select(num) {
+        selected_current = num
+        
+        for (let i = 1; i < 5; i++) {
+          if (num == i) {
+            document.getElementById("Button"+i).innerText = "X"
+          } else {
+            document.getElementById("Button"+i).innerText = ""
+          }
+        }
+      }
+    
+      function answerCurrentQuestion() {
+        let answer = selected_current
+        
+        if (selected_current == -1) {
+          if (doDeductSub) {
+            iqDeductions += 10
+          }
+          doDeductSub = true
+          alert("Select an answer")
+          return
+        }
+        
+        if (answer == answers[questionNum]) {
+          correct+=1
+        }
+        
+        questionNum += 1
+        
+        if (questionNum >= totalQuestions) {
+          let iq = calculateIQ();
+          let str = "<p>Your test score is: "+calculateIQ()+"/200 "
+
+          if (iq >= 150) {
+            str += "Your score code is: CC-"+iq
+          } else {
+            str += "Your score code is: FF-"+iq
+          }
+
+          str = str+"</p>"
+          document.write(str)
+          return
+        }
+        
+        loadQuestion()
+      }
+      
+      function calculateIQ() {
+        if (correct == 0) {
+          return 20;
+        }
+        
+        //Time deductions
+        let avgTPQ = testTime / totalQuestions
+        
+        if (avgTPQ > 3) iqDeductions += 3;
+        if (avgTPQ > 15) iqDeductions += 10;
+        if (avgTPQ > 30) iqDeductions += 15;
+        if (avgTPQ > 50) iqDeductions += 25;
+        
+        return max(Math.round(200*(correct/totalQuestions) -iqDeductions),20)
+      }
+      
+      document.addEventListener("DOMContentLoaded", (event) => {
+        loadQuestion()
+      });
+      
+    </script>
+    
+    <h1>IQ Test!</h1>
+    
+    <p id="Question">Loading</p>
+    <button id="Button1" onclick="select(1)" class="QuestionBox"></button> <textHolder id="Answer1">Loading</textHolder> <br>
+    <button id="Button2" onclick="select(2)" class="QuestionBox"></button> <textHolder id="Answer2">Loading</textHolder> <br>
+    <button id="Button3" onclick="select(3)" class="QuestionBox"></button> <textHolder id="Answer3">Loading</textHolder> <br>
+    <button id="Button4" onclick="select(4)" class="QuestionBox"></button> <textHolder id="Answer4">Loading</textHolder> <br>
+    <button onclick="answerCurrentQuestion()">Submit</button>
+  </body>
+</html>
